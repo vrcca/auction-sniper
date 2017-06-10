@@ -4,11 +4,13 @@ import com.github.vrcca.goos.domain.utils.Announcer;
 
 public class AuctionSniper implements AuctionEventListener {
 
+    private final Item item;
     private final Auction auction;
     private SniperSnapshot snapshot;
     private final Announcer<SniperListener> sniperListeners = Announcer.to(SniperListener.class);
 
     public AuctionSniper(Item item, Auction auction) {
+        this.item = item;
         this.auction = auction;
         this.snapshot = SniperSnapshot.joining(item.identifier);
     }
@@ -26,8 +28,12 @@ public class AuctionSniper implements AuctionEventListener {
                 break;
             case FromOtherBidder:
                 final int bid = price + increment;
-                auction.bid(bid);
-                snapshot = snapshot.bidding(price, bid);
+                if (item.allowsBid(bid)) {
+                    auction.bid(bid);
+                    snapshot = snapshot.bidding(price, bid);
+                } else {
+                    snapshot = snapshot.losing(price);
+                }
                 break;
         }
         notifyChange();

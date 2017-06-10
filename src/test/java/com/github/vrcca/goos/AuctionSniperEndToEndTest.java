@@ -3,7 +3,6 @@ package com.github.vrcca.goos;
 import _support.application.service.FakeAuctionServer;
 import _support.application.view.ApplicationRunner;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class AuctionSniperEndToEndTest {
@@ -109,7 +108,6 @@ public class AuctionSniperEndToEndTest {
         application.showsSniperHasWonAuction(auction, 1098);
     }
 
-    @Ignore("Still under development")
     @Test
     public void sniperLosesAnAuctionWhenThePriceIsTooHigh() throws Exception {
         // when
@@ -132,7 +130,7 @@ public class AuctionSniperEndToEndTest {
         // when
         auction.reportPrice(1207, 10, "fourth party");
         // then
-        application.hasShownSniperIsLosing(auction, 1207, 1198);
+        application.hasShownSniperIsLosing(auction, 1207, 1098);
 
         // when
         auction.announceClosed();

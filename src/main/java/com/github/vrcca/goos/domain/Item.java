@@ -42,4 +42,8 @@ public class Item {
                 .append("stopPrice", stopPrice)
                 .toString();
     }
+
+    public boolean allowsBid(int bid) {
+        return bid <= stopPrice;
+    }
 }
