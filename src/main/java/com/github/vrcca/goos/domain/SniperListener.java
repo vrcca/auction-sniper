@@ -1,0 +1,7 @@
+package com.github.vrcca.goos.domain;
+
+import java.util.EventListener;
+
+public interface SniperListener extends EventListener {
+    void sniperStateChanged(SniperSnapshot sniperSnapshot);
+}
