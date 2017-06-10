@@ -1,16 +1,13 @@
 package com.github.vrcca.goos.application.service.xmpp;
 
-import com.github.vrcca.goos.domain.utils.Announcer;
 import com.github.vrcca.goos.domain.Auction;
 import com.github.vrcca.goos.domain.AuctionEventListener;
+import com.github.vrcca.goos.domain.utils.Announcer;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
 public class XMPPAuction implements Auction {
-
-    private static final String ITEM_ID_AS_LOGIN = "auction-%s";
-    private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/";
 
     public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
 
@@ -20,18 +17,40 @@ public class XMPPAuction implements Auction {
     private final Announcer<AuctionEventListener> auctionEventListeners = Announcer.to(AuctionEventListener.class);
     private Chat chat;
 
-    public XMPPAuction(XMPPConnection connection, String resource, String itemId) {
-        chat = connection.getChatManager()
-                .createChat(auctionId(itemId, connection, resource), null);
-
-        chat.addMessageListener(
-                new AuctionMessageTranslator(
-                        connection.getUser(),
-                        auctionEventListeners.announce()));
+    public XMPPAuction(final XMPPConnection connection, final String auctionJID, XMPPFailureReporter failureReporter) {
+        final AuctionMessageTranslator translator = translatorFor(connection, failureReporter);
+        chat = connection
+                .getChatManager()
+                .createChat(
+                        auctionJID,
+                        translator);
+        addAuctionEventListener(chatDisconnectorFor(translator));
     }
 
-    private static String auctionId(String itemId, XMPPConnection connection, String resource) {
-        return String.format(AUCTION_ID_FORMAT, itemId, connection.getServiceName()) + resource;
+    private AuctionMessageTranslator translatorFor(final XMPPConnection connection, XMPPFailureReporter failureReporter) {
+        return new AuctionMessageTranslator(
+                connection.getUser(),
+                auctionEventListeners.announce(),
+                failureReporter);
+    }
+
+    private AuctionEventListener chatDisconnectorFor(final AuctionMessageTranslator translator) {
+        return new AuctionEventListener() {
+            @Override
+            public void auctionClosed() {
+                // empty method
+            }
+
+            @Override
+            public void currentPrice(int price, int increment, PriceSource priceSource) {
+                // empty method
+            }
+
+            @Override
+            public void auctionFailed() {
+                chat.removeMessageListener(translator);
+            }
+        };
     }
 
     @Override

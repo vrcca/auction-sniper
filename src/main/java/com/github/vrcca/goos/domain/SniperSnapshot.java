@@ -1,5 +1,7 @@
 package com.github.vrcca.goos.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class SniperSnapshot {
@@ -34,12 +36,42 @@ public class SniperSnapshot {
         return new SniperSnapshot(itemId, newLastPrice, lastBid, SniperState.LOSING);
     }
 
+    public SniperSnapshot failed() {
+        return new SniperSnapshot(itemId, 0, 0, SniperState.FAILED);
+    }
+
     public SniperSnapshot closed() {
         return new SniperSnapshot(itemId, lastPrice, lastBid, state.whenAuctionClosed());
     }
 
     public boolean isForSameItemAs(SniperSnapshot that) {
         return itemId.equals(that.itemId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SniperSnapshot that = (SniperSnapshot) o;
+
+        return new EqualsBuilder()
+                .append(lastPrice, that.lastPrice)
+                .append(lastBid, that.lastBid)
+                .append(itemId, that.itemId)
+                .append(state, that.state)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(itemId)
+                .append(lastPrice)
+                .append(lastBid)
+                .append(state)
+                .toHashCode();
     }
 
     @Override

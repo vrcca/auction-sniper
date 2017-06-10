@@ -128,6 +128,19 @@ public class AuctionSniperTest {
         verifyNoMoreInteractions(auction);
     }
 
+    @Test
+    public void reportsFailedIfAuctionFailsWhenBidding() throws Exception {
+        // when
+        sniper.currentPrice(123,    45, PriceSource.FromOtherBidder);
+        // then
+        verify(sniperListener, times(1)).sniperStateChanged(argThat(aSniperThatIs(BIDDING)));
+
+        // when
+        sniper.auctionFailed();
+        // then
+        verify(sniperListener, times(1)).sniperStateChanged(new SniperSnapshot(ITEM_ID, 0, 0, SniperState.FAILED));
+    }
+
     private Matcher<SniperSnapshot> aSniperThatHas(final SniperState state) {
         return aSniperThatIs(state);
     }

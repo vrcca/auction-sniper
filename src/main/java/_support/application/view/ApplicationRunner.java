@@ -1,11 +1,15 @@
 package _support.application.view;
 
+import _support.application.infrastructure.AuctionLogDriver;
 import _support.application.service.FakeAuctionServer;
 import com.github.vrcca.goos.Main;
 import com.github.vrcca.goos.application.view.ui.MainWindow;
 import com.github.vrcca.goos.domain.SniperState;
 
+import java.io.IOException;
+
 import static com.github.vrcca.goos.application.view.ui.SnipersTableModel.textFor;
+import static org.hamcrest.Matchers.containsString;
 
 public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
@@ -14,6 +18,11 @@ public class ApplicationRunner {
     public static final String SNIPER_XMPP_ID = SNIPER_ID + "@" + XMPP_HOSTNAME + "/Auction";
 
     private AuctionSniperDriver driver;
+    private AuctionLogDriver logDriver = new AuctionLogDriver();
+
+    public void startBiddingIn(final FakeAuctionServer... auctions) {
+        startBiddingIn(Integer.MAX_VALUE, auctions);
+    }
 
     public void startBiddingIn(int stopPrice, final FakeAuctionServer... auctions) {
         startSniper();
@@ -25,6 +34,7 @@ public class ApplicationRunner {
     }
 
     private void startSniper() {
+        logDriver.clearLog();
         Thread thread = new Thread("Test Application") {
             @Override
             public void run() {
@@ -84,5 +94,13 @@ public class ApplicationRunner {
 
     public void showsSnipperHasLostAuction(FakeAuctionServer auction, int lastPrice, int lastBid) {
         driver.showsSniperStatus(auction.getItemId(), lastPrice, lastBid, "Lost");
+    }
+
+    public void showsSniperHasFailed(FakeAuctionServer auction) {
+        driver.showsSniperStatus(auction.getItemId(), 0, 0, "Failed");
+    }
+
+    public void reportsInvalidMessage(FakeAuctionServer auction, String message) throws IOException {
+        logDriver.hasEntry(containsString(message));
     }
 }

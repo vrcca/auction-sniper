@@ -21,6 +21,7 @@ public class SnipersTableModel
             "Winning",
             "Losing",
             "Lost",
+            "Failed",
             "Won"
     };
 
@@ -54,7 +55,12 @@ public class SnipersTableModel
     public void sniperStateChanged(SniperSnapshot newSnapshot) {
         int row = rowMatching(newSnapshot);
         snapshots.set(row, newSnapshot);
+        repaintRow(row);
+    }
+
+    private void repaintRow(int row) {
         fireTableRowsUpdated(row, row);
+        fireTableDataChanged();
     }
 
     private int rowMatching(SniperSnapshot snapshot) {
@@ -76,6 +82,6 @@ public class SnipersTableModel
     private void addSniperSnapshot(SniperSnapshot snapshot) {
         this.snapshots.add(snapshot);
         int row = snapshots.size() - 1;
-        fireTableRowsUpdated(row, row);
+        repaintRow(row);
     }
 }
