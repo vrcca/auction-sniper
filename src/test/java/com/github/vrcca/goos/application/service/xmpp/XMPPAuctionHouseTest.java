@@ -5,6 +5,7 @@ import _support.application.view.ApplicationRunner;
 import com.github.vrcca.goos.domain.Auction;
 import com.github.vrcca.goos.domain.AuctionEventListener;
 import com.github.vrcca.goos.domain.AuctionHouse;
+import com.github.vrcca.goos.domain.Item;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class XMPPAuctionHouseTest {
         // given
         CountDownLatch auctionWasClosed = new CountDownLatch(1);
 
-        Auction auction = auctionHouse.auctionFor(server.getItemId());
+        Auction auction = auctionHouse.auctionFor(new Item(server.getItemId(), 333));
         auction.addAuctionEventListener(auctionClosedListener(auctionWasClosed));
 
         // when

@@ -32,7 +32,7 @@ public class AuctionSniperTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        sniper = new AuctionSniper(ITEM_ID, auction);
+        sniper = new AuctionSniper(new Item(ITEM_ID, 123), auction);
         sniper.addSniperListener(sniperListener);
     }
 

@@ -1,6 +1,7 @@
 package com.github.vrcca.goos.application.view.ui;
 
 import _support.application.view.AuctionSniperDriver;
+import com.github.vrcca.goos.domain.Item;
 import com.github.vrcca.goos.domain.SniperPortfolio;
 import com.objogate.wl.swing.probe.ValueMatcherProbe;
 import org.junit.Test;
@@ -15,13 +16,15 @@ public class MainWindowTest {
     @Test
     public void makesUserRequestWhenJoinButtonClicked() throws Exception {
         // given
-        final ValueMatcherProbe<String> buttonProbe = new ValueMatcherProbe<>(equalTo("item"), "join request");
-        mainWindow.addUserRequestListener(buttonProbe::setReceivedValue);
+        final ValueMatcherProbe<Item> itemProbe = new ValueMatcherProbe<>(
+                equalTo(new Item("item", 789)),
+                "join request");
+        mainWindow.addUserRequestListener(itemProbe::setReceivedValue);
 
         // when
-        driver.startBiddingFor("item");
+        driver.startBiddingFor("item", 789);
 
         // then
-        driver.check(buttonProbe);
+        driver.check(itemProbe);
     }
 }

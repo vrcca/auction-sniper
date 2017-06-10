@@ -2,6 +2,7 @@ package com.github.vrcca.goos.application.service.xmpp;
 
 import com.github.vrcca.goos.domain.Auction;
 import com.github.vrcca.goos.domain.AuctionHouse;
+import com.github.vrcca.goos.domain.Item;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
@@ -17,8 +18,8 @@ public class XMPPAuctionHouse implements AuctionHouse {
     }
 
     @Override
-    public Auction auctionFor(String itemId) {
-        return new XMPPAuction(connection, AUCTION_RESOURCE, itemId);
+    public Auction auctionFor(Item item) {
+        return new XMPPAuction(connection, AUCTION_RESOURCE, item.identifier);
     }
 
     public static AuctionHouse connect(String host, String user, String password) throws XMPPException {

@@ -13,6 +13,8 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.table.JTableHeader;
 
+import static com.github.vrcca.goos.application.view.ui.MainWindow.NEW_ITEM_ID_NAME;
+import static com.github.vrcca.goos.application.view.ui.MainWindow.NEW_ITEM_STOP_PRICE_NAME;
 import static com.objogate.wl.swing.matcher.IterableComponentsMatcher.matching;
 import static com.objogate.wl.swing.matcher.JLabelTextMatcher.withLabelText;
 import static java.lang.String.valueOf;
@@ -51,13 +53,14 @@ public class AuctionSniperDriver extends JFrameDriver {
         );
     }
 
-    public void startBiddingFor(String itemId) {
-        itemIdField().replaceAllText(itemId);
+    public void startBiddingFor(String itemId, int stopPrice) {
+        textField(NEW_ITEM_ID_NAME).replaceAllText(itemId);
+        textField(NEW_ITEM_STOP_PRICE_NAME).replaceAllText(String.valueOf(stopPrice));
         bidButton().click();
     }
 
-    private JTextFieldDriver itemIdField() {
-        JTextFieldDriver newItemId = new JTextFieldDriver(this, JTextField.class, named(MainWindow.NEW_ITEM_ID_NAME));
+    private JTextFieldDriver textField(String name) {
+        JTextFieldDriver newItemId = new JTextFieldDriver(this, JTextField.class, named(name));
         newItemId.focusWithMouse();
         return newItemId;
     }

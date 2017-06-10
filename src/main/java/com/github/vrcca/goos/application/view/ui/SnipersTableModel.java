@@ -19,6 +19,7 @@ public class SnipersTableModel
             "Joining",
             "Bidding",
             "Winning",
+            "Losing",
             "Lost",
             "Won"
     };

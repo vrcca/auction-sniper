@@ -3,6 +3,7 @@ package com.github.vrcca.goos;
 import _support.application.service.FakeAuctionServer;
 import _support.application.view.ApplicationRunner;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class AuctionSniperEndToEndTest {
@@ -17,7 +18,7 @@ public class AuctionSniperEndToEndTest {
         auction.startSellingItem();
         auction2.startSellingItem();
         // when
-        application.startBiddingIn(auction, auction2);
+        application.startBiddingIn(Integer.MAX_VALUE, auction, auction2);
         // then
         auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
         auction2.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
@@ -53,7 +54,7 @@ public class AuctionSniperEndToEndTest {
         // given
         auction.startSellingItem();
         // when
-        application.startBiddingIn(auction);
+        application.startBiddingIn(Integer.MAX_VALUE, auction);
         // then
         auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
 
@@ -67,7 +68,7 @@ public class AuctionSniperEndToEndTest {
     public void sniperMakesAHigherBidButLoses() throws Exception {
         // when
         auction.startSellingItem();
-        application.startBiddingIn(auction);
+        application.startBiddingIn(Integer.MAX_VALUE, auction);
         //then
         auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
 
@@ -87,7 +88,7 @@ public class AuctionSniperEndToEndTest {
     public void sniperWinsAnAuctionByBiddingHigher() throws Exception {
         // when
         auction.startSellingItem();
-        application.startBiddingIn(auction);
+        application.startBiddingIn(Integer.MAX_VALUE, auction);
         //then
         auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
 
@@ -106,6 +107,37 @@ public class AuctionSniperEndToEndTest {
         auction.announceClosed();
         // then
         application.showsSniperHasWonAuction(auction, 1098);
+    }
+
+    @Ignore("Still under development")
+    @Test
+    public void sniperLosesAnAuctionWhenThePriceIsTooHigh() throws Exception {
+        // when
+        auction.startSellingItem();
+        application.startBiddingWithStopPrice(auction, 1100);
+        //then
+        auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
+
+        // when
+        auction.reportPrice(1000, 98, "other bidder");
+        // then
+        application.hasShownSniperIsBidding(auction, 1000, 1098);
+        auction.hasReceivedBid(1098, ApplicationRunner.SNIPER_XMPP_ID);
+
+        // when
+        auction.reportPrice(1197, 10, "third party");
+        // then
+        application.hasShownSniperIsLosing(auction, 1197, 1098);
+
+        // when
+        auction.reportPrice(1207, 10, "fourth party");
+        // then
+        application.hasShownSniperIsLosing(auction, 1207, 1198);
+
+        // when
+        auction.announceClosed();
+        // then
+        application.showsSnipperHasLostAuction(auction, 1207, 1098);
     }
 
     @After

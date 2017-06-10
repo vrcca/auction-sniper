@@ -2,6 +2,7 @@ package com.github.vrcca.goos.application.view.ui;
 
 import com.github.vrcca.goos.domain.Auction;
 import com.github.vrcca.goos.domain.AuctionSniper;
+import com.github.vrcca.goos.domain.Item;
 import com.github.vrcca.goos.domain.SniperSnapshot;
 import com.github.vrcca.goos.domain.exception.Defect;
 import org.junit.Before;
@@ -50,7 +51,7 @@ public class SnipersTableModelTest {
     @Test
     public void setsSniperValuesInColumns() throws Exception {
         // given
-        final AuctionSniper sniper = new AuctionSniper("item id", auction);
+        final AuctionSniper sniper = new AuctionSniper(new Item("item id", 444), auction);
         model.sniperAdded(sniper);
 
         // when
@@ -72,7 +73,7 @@ public class SnipersTableModelTest {
     @Test
     public void notifiesListenersWhenAddingASniper() throws Exception {
         // given
-        final AuctionSniper sniper = new AuctionSniper("item123", auction);
+        final AuctionSniper sniper = new AuctionSniper(new Item("item123", 111), auction);
         assertThat(model.getRowCount(), is(0));
 
         // when
@@ -87,8 +88,8 @@ public class SnipersTableModelTest {
     @Test
     public void holdsSnipersInAdditionOrder() throws Exception {
         // when
-        model.sniperAdded(new AuctionSniper("item 0", auction));
-        model.sniperAdded(new AuctionSniper("item 1", auction));
+        model.sniperAdded(new AuctionSniper(new Item("item 0", 111), auction));
+        model.sniperAdded(new AuctionSniper(new Item("item 1", 222), auction));
 
         // then
         assertThat(cellValue(0, Column.ITEM_IDENTIFIER), is("item 0"));
@@ -98,8 +99,8 @@ public class SnipersTableModelTest {
     @Test
     public void updatesCorrectRowForSniper() throws Defect {
         // given
-        final AuctionSniper sniper1 = new AuctionSniper("item 0", auction);
-        final AuctionSniper sniper2 = new AuctionSniper("item 1", auction);
+        final AuctionSniper sniper1 = new AuctionSniper(new Item("item 0", 111), auction);
+        final AuctionSniper sniper2 = new AuctionSniper(new Item("item 1", 222), auction);
         model.sniperAdded(sniper1);
         model.sniperAdded(sniper2);
         final SniperSnapshot bidding = sniper1.getSnapshot().bidding(100, 20);

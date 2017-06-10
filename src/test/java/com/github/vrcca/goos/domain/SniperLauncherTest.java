@@ -34,13 +34,13 @@ public class SniperLauncherTest {
     @Test
     public void addsNewSniperToCollectorAndThenJoinsAuction() throws Exception {
         // given
-        final String itemId = "item 123";
+        final Item item = new Item("item 123", 111);
 
         final Auction auction = mock(Auction.class);
-        when(auctionHouse.auctionFor(itemId)).thenReturn(auction);
+        when(auctionHouse.auctionFor(item)).thenReturn(auction);
 
         // when
-        launcher.joinAuction(itemId);
+        launcher.joinAuction(item);
 
         // then
         InOrder inOrder = Mockito.inOrder(auction, collector, auction);
